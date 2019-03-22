@@ -47,7 +47,7 @@ class ModuleConfig extends \Magento\Framework\App\Config\Value
      * @var string
      */
     protected $_runModelPath = '';
-
+    const ENABLE_OPTION_PATH = 'multifilter/general/active';
     /**
      *
      * @param \Magento\Framework\Model\Context $context
@@ -95,13 +95,19 @@ class ModuleConfig extends \Magento\Framework\App\Config\Value
         $modules           = array('Cybage_Layernavmultifilter');
         try {
             if ($checkModuleStatus == '1') {
-                echo 'here';exit;
                 /* Code to enable a module [ php bin/magento module:enable VENDORNAME_MODULENAME ] */
                 $moduleStatus = $this->_comandLine->setIsEnabled(true, $modules);
             } else {
-                 echo 'here1';exit;
                 /* Code to enable a module [ php bin/magento module:enable VENDORNAME_MODULENAME ] */
                 $moduleStatus = $this->_comandLine->setIsEnabled(false, $modules);
+                $this->_configValueFactory->create()->load(
+                self::ENABLE_OPTION_PATH,
+                'path'
+                )->setValue(
+                    1
+                )->setPath(
+                    self::ENABLE_OPTION_PATH
+                )->save();
             }
 
             /* Code to clean cache [ php bin/magento:cache:clean ] */

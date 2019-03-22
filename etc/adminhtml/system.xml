@@ -34,6 +34,21 @@
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <backend_model>Cybage\Layernavmultifilter\Model\Config\ModuleConfig</backend_model>
+                    <comment><![CDATA[
+                      <script type="text/javascript">//<![CDATA[
+                          require(['jquery'], function(){
+                              if (jQuery('#multifilter_general_active').val() == 0) {
+                                  alert("You need to enable Multifilter module by executing command php bin/magento module:enable Cybage_Layernavmultifilter ");
+                              }
+
+                              jQuery('#multifilter_general_active').change(function() {
+                                  if (jQuery(this).val() == 0) {
+                                       alert("Do you want to disable it? You need to enable it by executing command php bin/magento module:enable Cybage_Layernavmultifilter");
+                                  }
+                              });
+
+                          });
+                      </script>]]></comment>
                 </field>
                 <field id="expand_filters" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Expand filters</label>
