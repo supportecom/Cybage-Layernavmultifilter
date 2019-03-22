@@ -33,6 +33,7 @@
                 <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Cybage\Layernavmultifilter\Model\Config\ModuleConfig</backend_model>
                 </field>
                 <field id="expand_filters" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Expand filters</label>

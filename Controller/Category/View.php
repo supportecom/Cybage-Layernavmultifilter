@@ -111,7 +111,7 @@ class View extends \Magento\Framework\App\Action\Action
         } else {
             $this->multifilterSession->setType('coreblock');
             $returnValue = $proceed();
-            return $returnValue;
+            return $proceed();
         }
     }
 }
