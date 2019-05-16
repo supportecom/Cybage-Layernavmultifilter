@@ -65,9 +65,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
      */
     protected $_configurable;
-
+    
     /**
      *
+     * @var \Magento\Framework\Session\Generic $generic 
+     */
+    protected $layerResolver;
+    
+    /**
+     *
+     * @var \Magento\Directory\Model\Currency
+     */
+    protected $_currency;
+    
+    /**
+     * 
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Catalog\Model\Product $productModel
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -76,6 +88,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Framework\Session\SessionManager $sessionManager
      * @param \Magento\Framework\Session\Generic $generic
      * @param \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
+     * @param \Magento\Directory\Model\Currency $currency
      */
     public function __construct(
         \Magento\Framework\Registry $coreRegistry,
@@ -85,7 +100,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Model\Product\Attribute\Repository $repository,
         \Magento\Framework\Session\SessionManager $sessionManager,
         \Magento\Framework\Session\Generic $generic,
-        \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable
+        \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Directory\Model\CurrencyFactory $currency
     ) {
         $this->_multifilterSession = $generic;
         $this->_coreRegistry = $coreRegistry;
@@ -95,6 +113,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_repository = $repository;
         $this->_sessionManager = $sessionManager;
         $this->_configurable = $configurable;
+        $this->_storeManager = $storeManager;
+        $this->layerResolver = $layerResolver;
+        $this->_currency = $currency;
     }
 
     /**
@@ -106,7 +127,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getConfig($configPath) {
         return $this->_scopeConfig->getValue($configPath, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
-
+    
+    public function getCurrentCategory()
+    {
+        return $this->layerResolver->get()->getCurrentCategory();
+    }
+    
     /**
      * Function to fetch product collection based on selected filters
      *
@@ -118,8 +144,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $registerCat = '';
         $currentCat = $this->_coreRegistry->registry('current_category');
         if (empty($currentCat) && empty($categories)) {
-            $catId = $this->_multifilterSession->getTopCategory();
-            $currentCat = $this->_categoryRepository->get($catId);
+            $catId = $this->getCurrentCategory()->getId();
+            $storeId = $this->_storeManager->getStore()->getId();
+            $currentCat = $this->_categoryRepository->get($catId, $this->_storeManager->getStore()->getId());          
         }
         if (!empty($categories)) {
             $registerCat = array_unique($categories);
@@ -259,5 +286,17 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $attributeColl = $this->_repository->get($attributeCode);
         $frontendType = $attributeColl->getFrontendInput();
         return $frontendType;
+    }
+    
+    /**
+    * Get currency symbol for current locale and currency code
+    *
+    * @return string
+    */ 
+    public function getCurrentCurrencySymbol()
+    {
+        $currencyCode = $this->_storeManager->getStore()->getCurrentCurrencyCode();
+        $currency = $this->_currency->create()->load($currencyCode);
+        return $currencySymbol = $currency->getCurrencySymbol();
     }
 }

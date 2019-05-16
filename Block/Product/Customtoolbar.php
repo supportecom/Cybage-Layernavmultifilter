@@ -164,11 +164,13 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
         \Magento\Framework\Session\Generic $generic,
         \Magento\Framework\Registry $coreRegistry,
         \Cybage\Layernavmultifilter\Helper\Data $helperData,
+        \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         array $data = []
     ) {
         $this->multifilterSession = $generic;
         $this->coreRegistry = $coreRegistry;
         $this->helperData = $helperData;
+        $this->layerResolver = $layerResolver;
         parent::__construct(
             $context,
             $catalogSession,
@@ -211,9 +213,14 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
     {
         if (empty($this->multifilterSession->getTopCategory()) && empty($this->multifilterSession->getCategories())) {
             $currentCat = $this->coreRegistry->registry('current_category');
-            return $currentCat->getId();
+            return $this->getCurrentCategory()->getId();
         } else {
-            return $this->multifilterSession->getTopCategory();
+            return $this->getCurrentCategory()->getId();
         }
+    }
+    
+    public function getCurrentCategory()
+    {
+        return $this->layerResolver->get()->getCurrentCategory();
     }
 }

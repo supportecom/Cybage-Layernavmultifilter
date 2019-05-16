@@ -105,8 +105,10 @@ if ($block->canShowBlock()):
                     success: function (data) {
                         $('#result_data').html(data.list);
                         $('.filter-current').html(data.content);
+                        location.reload();
                         $('#ajaxcollection').show();
                         $('#corecollection').hide();
+                        
                     }
                 });
             } else {

@@ -35,6 +35,8 @@ if (!empty($attributes)) {
         $vals[] = $data['value'];
     }
 }
+
+$currencySymbol = $this->helper('Cybage\Layernavmultifilter\Helper\Data')->getCurrentCurrencySymbol();
 ?>
 <?php
 $priceDisplayMode = $this->helper('Cybage\Layernavmultifilter\Helper\Data')->getConfig('multifilter/general/display_mode');
@@ -69,8 +71,9 @@ if ($filter->getName() == 'Price' && $priceDisplayMode == 'slider'):
                     $('#sliderprice').val(text + ui.values[0] + "-" + ui.values[1]);
                 }
             });
-            $("#amount").val("$" + $("#price-slider").slider("values", 0) +
-                    " - $" + $("#price-slider").slider("values", 1));
+            var currencySymbol = '<?php echo $currencySymbol ?>';
+            $("#amount").val(currencySymbol + $("#price-slider").slider("values", 0) +
+                    " - "+ currencySymbol + $("#price-slider").slider("values", 1));
         });
         function resetSlider(){
             var sliderr = jQuery("div#price-slider");
