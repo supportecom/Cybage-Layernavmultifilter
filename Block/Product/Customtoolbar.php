@@ -219,6 +219,10 @@ class Customtoolbar extends \Magento\Catalog\Block\Product\ProductList\Toolbar
         }
     }
     
+    /**
+     * get current category
+     * @return int
+     */
     public function getCurrentCategory()
     {
         return $this->layerResolver->get()->getCurrentCategory();
