@@ -110,7 +110,7 @@ class ModuleConfig extends \Magento\Framework\App\Config\Value
                 )->save();
             }
 
-            /* Code to clean cache [ php bin/magento:cache:clean ] */
+            /* Code to clean cache [ php bin/magento cache:clean ] */
             try {
                 $types = array('config', 'layout', 'block_html', 'collections', 'reflection',
                     'db_ddl', 'eav', 'config_integration', 'config_integration_api',
@@ -121,13 +121,11 @@ class ModuleConfig extends \Magento\Framework\App\Config\Value
                 foreach ($this->_cacheFrontendPool as $cacheFrontend) {
                     $cacheFrontend->getBackend()->clean();
                 }
-            } catch (Exception $e) {
-                echo $msg = 'Error during cache clean: '.$e->getMessage();
-                die();
+            } catch (\Exception $e) {
+                return 'Error during cache clean: '.$e->getMessage();
             }
-        } catch (Exception $e) {
-            echo $msg = 'Error during module enabling : '.$e->getMessage();
-            die();
+        } catch (\Exception $e) {
+            return 'Error during module enabling : '.$e->getMessage();
         }
 
         return parent::afterSave();
